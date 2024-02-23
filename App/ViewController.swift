@@ -4,25 +4,33 @@
 //
 //  Created by 和田康一 on 2024/01/13.
 //
-// 本画面はパスワードを生成するための画面です。
 
 import UIKit
 
+/// 本画面はパスワードを生成するための画面です。
 class ViewController: UIViewController {
     
+    // MARK: - Properties
+    
     var screenChangeMessage: String = "４桁のパスワード生成ページへ遷移しました。"
-    var result_NumPass: String = ""
+    var resultNumPass: String = ""
     var stringPassword = ["4文字", "8文字", "16文字", "その他"]
+    
+    // MARK: - IBOutlets
     
     @IBOutlet weak var outputSecurityMessageLabel: UILabel!
     @IBOutlet weak var outputTableView: UITableView!
     @IBOutlet weak var outputPasswordLabel: UILabel!
+    
+    // MARK: - View Life-Cycle Methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
         outputTableView.dataSource = self
         outputTableView.tableFooterView = UIView()
     }
+    
+    // MARK: - IBActions
     
     //「パスワードを生成」ボタンをタップするとtapPasswordCreateButton関数が実行される。
     // 半角英数字記号を含む、ランダムな文字列が生成される。
@@ -68,6 +76,7 @@ class ViewController: UIViewController {
     // ４桁のパスワードを生成するための専用画面へ遷移する。
     @IBAction func tapNextScreenButton(_ sender: UIButton) {
         let nextVC = NextViewController()
+        nextVC.delegate = self
         nextVC.name = self.screenChangeMessage
         navigationController?.pushViewController(nextVC, animated: true)
     }
@@ -75,12 +84,12 @@ class ViewController: UIViewController {
     //「暗証番号の生成」ボタンをタップすると、tabGetNumberPasswordButton関数が実行される。
     // 生成した４桁のパスワードをdelegateを使って子画面から親画面に渡す。
     @IBAction func tabGetNumberPasswordButton(_ sender: Any) {
-        let nextVC = NextViewController()
-        nextVC.delegate = self
         print("ボタンが押されました。")
-        print(result_NumPass)
+        print(resultNumPass)
     }
 }
+
+// MARK: - Extensions
 
 extension ViewController: UITableViewDataSource {
     // リストの数を指定する　passlistの配列の個数を指定
@@ -99,8 +108,8 @@ extension ViewController: UITableViewDataSource {
 
 // 子画面から親画面へ４桁の暗証番号を渡す。
 extension ViewController: NextViewControllerDelegate{
-    func update(result_num: String) {
-        self.result_NumPass = result_num
+    func update(resultNum: String) {
+        self.resultNumPass = resultNum
     }
 }
 

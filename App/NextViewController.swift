@@ -9,21 +9,32 @@
 import UIKit
 
 protocol NextViewControllerDelegate: AnyObject{
-    func update(result_num: String)
+    func update(resultNum: String)
 }
 
 class NextViewController: UIViewController {
     
+    // MARK: - Properties
+    
     var name: String = ""
     var name2: String = "最後の画面です。"
+    var resultNum: String = ""
     
     weak var delegate: NextViewControllerDelegate?
+    
+    // MARK: - IBOutlets
+    
     @IBOutlet weak var messageLabel: UILabel!
     @IBOutlet weak var resultLabel: UILabel!
     
+    // MARK: - View Life-Cycle Methods
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        configureBarButtonItems()
     }
+    
+    // MARK: - IBActions
     
     // 「４桁のパスワードを生成」ボタンをタップするとtapCreateNumberPasswordButton関数が実行される。
     // ４桁の数字がランダム表示される。
@@ -37,13 +48,10 @@ class NextViewController: UIViewController {
         let numbase = "1234567890"
         
         // 乱数発生(数字 / 4桁)
-        let random_num = String((0..<(4)).map{ _ in numbase.randomElement()! })
-        print(random_num)
-        resultLabel.text = random_num
-        var result_num = String(random_num)
-        
-        //　生成した４桁の数字を親画面へ渡す。
-        delegate?.update(result_num: result_num)
+        let randomNum = String((0..<(4)).map{ _ in numbase.randomElement()! })
+        print(randomNum)
+        resultLabel.text = randomNum
+        resultNum = randomNum
     }
     
     // 画面遷移（作成中です。）
@@ -51,5 +59,24 @@ class NextViewController: UIViewController {
         let nextnextVC = NextNextViewController()
         nextnextVC.name2 = self.name2
         navigationController?.pushViewController(nextnextVC, animated: true)
+    }
+    
+    // MARK: - Other Methods
+    
+    /// バーボタンアイテムの設定
+    private func configureBarButtonItems() {
+        let closeButton = UIBarButtonItem(title: "戻る",
+                                          style: .plain,
+                                          target: self,
+                                          action: #selector(didTapBackButton))
+        navigationItem.leftBarButtonItem = closeButton
+    }
+    
+    /// 戻るボタンがタップされた
+    @objc func didTapBackButton() {
+        //　生成した４桁の数字を親画面へ渡す。
+        delegate?.update(resultNum: resultNum)
+        // １つ前の画面に戻る
+        navigationController?.popViewController(animated: true)
     }
 }
